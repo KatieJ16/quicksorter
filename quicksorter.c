@@ -1,5 +1,5 @@
 /* Quicksort. 
- * Takes input from the command-line, 
+ * Takes input from the command-line 
  * sorts the numbers using quicksort and a linked list.
  */
 
@@ -17,49 +17,59 @@
  */
 
 node* quicksort(node* list) {
-    node* first;
-    node* current;
+    node* first = NULL;
+    node* current = NULL;
     node* larger = NULL;
     node* smaller = NULL;
+    node* equal = NULL;
 
     /* Return when there are 0 nodes. */
     if (list == NULL) {
+        free_list(smaller);
+        free_list(larger);
+        free_list(first);
+        free_list(current);
         return list;
     }
     if(list->next == NULL) {
+        free_list(smaller);
+        free_list(larger);
+        free_list(first);
+        free_list(current);
         return list;
     }
 
 
     /* Copy of first node */
     first = list;
-    current = first->next;
     
     /* Break into two linked lists. 
      * One for elements that are >= and one for less than. */
     for(current = first; current != NULL; current = current->next) {
-        if(current->data >= first->data) {
+        if(current->data == first->data) {
+            equal = create_node(current->data, equal);
+        } else if(current->data > first->data) {
             larger = create_node(current->data, larger);
         } else {
             smaller = create_node(current->data, smaller);
         }
     }
-
+    
     /* recusively sort larger and smaller lists. */
     smaller = quicksort(smaller);
     larger = quicksort(larger);
 
     /* merege lists. */
-    list = append_lists(smaller, larger);
+    current = append_lists(append_lists(smaller, equal), larger);
     
     /* free all lists. */
     free_list(smaller);
     free_list(larger);
     free_list(first);
-    free_list(current);
-    
+    free_list(equal);
+   
     /* Return sorted list. */
-    return list;
+    return current;
 }
 
 int main(int argc, char *argv[]) {
@@ -90,7 +100,6 @@ int main(int argc, char *argv[]) {
     }
    
     free_list(list);
-    print_memory_leaks();
 
     return 0;
 }
