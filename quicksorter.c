@@ -17,7 +17,8 @@
  */
 
 node* quicksort(node* list) {
-    node* first = NULL;
+/*    node* first = NULL;*/
+    int first;
     node* current = NULL;
     node* larger = NULL;
     node* smaller = NULL;
@@ -25,30 +26,22 @@ node* quicksort(node* list) {
 
     /* Return when there are 0 nodes. */
     if (list == NULL) {
-        free_list(smaller);
-        free_list(larger);
-        free_list(first);
-        free_list(current);
         return list;
     }
     if(list->next == NULL) {
-        free_list(smaller);
-        free_list(larger);
-        free_list(first);
-        free_list(current);
         return list;
     }
 
 
     /* Copy of first node */
-    first = list;
+    first = list->data;
     
     /* Break into two linked lists. 
      * One for elements that are >= and one for less than. */
-    for(current = first; current != NULL; current = current->next) {
-        if(current->data == first->data) {
+    for(current = list; current != NULL; current = current->next) {
+        if(current->data == first) {
             equal = create_node(current->data, equal);
-        } else if(current->data > first->data) {
+        } else if(current->data > first) {
             larger = create_node(current->data, larger);
         } else {
             smaller = create_node(current->data, smaller);
@@ -59,15 +52,21 @@ node* quicksort(node* list) {
     smaller = quicksort(smaller);
     larger = quicksort(larger);
 
+    smaller = append_lists(smaller,equal);
+    free_list(equal);
+
     /* merege lists. */
-    current = append_lists(append_lists(smaller, equal), larger);
+    current = append_lists(smaller, larger);
     
     /* free all lists. */
     free_list(smaller);
     free_list(larger);
-    free_list(first);
-    free_list(equal);
-   
+    /*free_list(first);*/
+    /*free_list(equal);*/
+
+    /* check that list is sorter. */
+    assert(is_sorted(current) == 1);
+
     /* Return sorted list. */
     return current;
 }
@@ -100,6 +99,7 @@ int main(int argc, char *argv[]) {
     }
    
     free_list(list);
-
+    
+    /*print_memory_leaks();*/
     return 0;
 }
