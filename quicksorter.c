@@ -1,6 +1,6 @@
-/* Quicksort. 
- * Takes input from the command-line 
- * sorts the numbers using quicksort and a linked list.
+/* Quicksort.
+ * Takes input from the command-line, 
+ * and sorts the numbers using quicksort and a linked list.
  */
 
 #include <stdio.h>
@@ -17,9 +17,7 @@
  */
 
 node* quicksort(node* list) {
-/*    node* first = NULL;*/
     int first;
-    node* current = NULL;
     node* larger = NULL;
     node* smaller = NULL;
     node* equal = NULL;
@@ -38,37 +36,36 @@ node* quicksort(node* list) {
     
     /* Break into two linked lists. 
      * One for elements that are >= and one for less than. */
-    for(current = list; current != NULL; current = current->next) {
-        if(current->data == first) {
-            equal = create_node(current->data, equal);
-        } else if(current->data > first) {
-            larger = create_node(current->data, larger);
+    while(list != NULL) {
+        if(list->data == first) {
+            equal = create_node(list->data, equal);
+        } else if(list->data > first) {
+            larger = create_node(list->data, larger);
         } else {
-            smaller = create_node(current->data, smaller);
+            smaller = create_node(list->data, smaller);
         }
+        list = list->next;
     }
     
     /* recusively sort larger and smaller lists. */
     smaller = quicksort(smaller);
     larger = quicksort(larger);
 
-    smaller = append_lists(smaller,equal);
+    smaller = append_lists(smaller, equal);
     free_list(equal);
 
     /* merege lists. */
-    current = append_lists(smaller, larger);
+    list = append_lists(smaller, larger);
     
     /* free all lists. */
     free_list(smaller);
     free_list(larger);
-    /*free_list(first);*/
-    /*free_list(equal);*/
 
     /* check that list is sorter. */
-    assert(is_sorted(current) == 1);
+    assert(is_sorted(list) == 1);
 
     /* Return sorted list. */
-    return current;
+    return list;
 }
 
 int main(int argc, char *argv[]) {
@@ -88,11 +85,10 @@ int main(int argc, char *argv[]) {
             to_print = 0;
         } else {
             list = create_node(atoi(argv[index]), list);
-        }
+        } 
     }
-    
-    list = quicksort(list);
 
+    list = quicksort(list);
 
     if(to_print == 1) { /* Printing elements unless -q flag is used. */
         print_list(list);
@@ -100,6 +96,6 @@ int main(int argc, char *argv[]) {
    
     free_list(list);
     
-    /*print_memory_leaks();*/
+    print_memory_leaks();
     return 0;
 }
